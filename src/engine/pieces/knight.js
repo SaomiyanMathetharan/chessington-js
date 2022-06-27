@@ -15,7 +15,12 @@ export default class Knight extends Piece {
         }
 
         const boardSize = board.board.length;
-        return availableMoves.filter(square => this.boundsCheck(square.row, square.col, boardSize));
+        return availableMoves.filter(square => this.boundsCheck(square.row, square.col, boardSize))
+            .filter(square => {
+                const piece = board.getPiece(square);
+                return typeof piece === "undefined" || (piece.capturable && piece.player !== this.player);
+            });
     }
+
 
 }
