@@ -11,4 +11,12 @@ export default class Piece {
         const currentSquare = board.findPiece(this);
         board.movePiece(currentSquare, newSquare);
     }
+
+    concatAvailableMoves() {
+        let availableMoves = [];
+        for (const possibleMoves of arguments) {
+            availableMoves = availableMoves.concat(possibleMoves);
+        }
+        return availableMoves;
+    }
 }
