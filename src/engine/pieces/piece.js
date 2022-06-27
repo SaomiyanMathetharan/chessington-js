@@ -3,6 +3,7 @@ import Square from "../square";
 export default class Piece {
     constructor(player) {
         this.player = player;
+        this.capturable = true;
     }
 
     getAvailableMoves(board) {
@@ -27,10 +28,12 @@ export default class Piece {
         const downClosestPiece = this.findClosestPiece(fromPosition, board, 0, 1);
         const leftClosestPiece = this.findClosestPiece(fromPosition, board, -1, 0);
         const rightClosestPiece = this.findClosestPiece(fromPosition, board, 1, 0);
+        const closestPieces = [upClosestPiece, downClosestPiece, leftClosestPiece, rightClosestPiece];
 
         return availableMoves.filter(square => !square.equals(fromPosition))
             .filter(square => leftClosestPiece.col < square.col && square.col < rightClosestPiece.col)
-            .filter(square => upClosestPiece.row < square.row && square.row < downClosestPiece.row);
+            .filter(square => upClosestPiece.row < square.row && square.row < downClosestPiece.row)
+            .concat(this.addCapturesToAvailableMoves(closestPieces,board));
     }
 
     getAllDiagonalAvailableMoves(board) {
@@ -40,8 +43,9 @@ export default class Piece {
         const upRightClosestPiece = this.findClosestPiece(fromPosition, board, 1, -1);
         const downLeftClosestPiece = this.findClosestPiece(fromPosition, board, -1, 1);
         const downRightClosestPiece = this.findClosestPiece(fromPosition, board, 1, 1);
+        const closestPieces = [upLeftClosestPiece, upRightClosestPiece, downLeftClosestPiece, downRightClosestPiece];
 
-        const a = this.diagonalAvailableMoves(board, fromPosition, 1, 1)
+        return this.diagonalAvailableMoves(board, fromPosition, 1, 1)
             .concat(this.diagonalAvailableMoves(board, fromPosition, -1, 1))
             .concat(this.diagonalAvailableMoves(board, fromPosition, 1, -1))
             .concat(this.diagonalAvailableMoves(board, fromPosition, -1, -1))
@@ -49,9 +53,8 @@ export default class Piece {
             .filter(square => upLeftClosestPiece.col < square.col || upLeftClosestPiece.row < square.row)
             .filter(square => square.col < upRightClosestPiece.col || upRightClosestPiece.row < square.row)
             .filter(square => downLeftClosestPiece.col < square.col || square.row < downLeftClosestPiece.row)
-            .filter(square => square.col < downRightClosestPiece.col || square.row < downRightClosestPiece.row);
-        console.log(a);
-        return a;
+            .filter(square => square.col < downRightClosestPiece.col || square.row < downRightClosestPiece.row)
+            .concat(this.addCapturesToAvailableMoves(closestPieces, board));
     }
 
     diagonalAvailableMoves(board, fromPosition, xDirection, yDirection) {
@@ -86,6 +89,20 @@ export default class Piece {
         }
 
         return new Square(row, col);
+    }
+
+    addCapturesToAvailableMoves(closestPieces, board) {
+        const possibleCaptures = [];
+        for (const square of closestPieces) {
+            if(!this.boundsCheck(square.row, square.col, board.board.length)) {
+                continue;
+            }
+            const piece = board.getPiece(square);
+            if(typeof piece !== "undefined" && piece.capturable && piece.player !== this.player) {
+                possibleCaptures.push(square);
+            }
+        }
+        return possibleCaptures;
     }
 
 }
