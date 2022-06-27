@@ -18,7 +18,8 @@ export default class Pawn extends Piece {
         const direction = this.player === Player.WHITE ? 1 : -1;
 
         return this.forwardOneSpaceAvailableMoves(board, fromPosition, direction)
-            .concat(this.forwardTwoSpacesAvailableMoves(board, fromPosition, direction));
+            .concat(this.forwardTwoSpacesAvailableMoves(board, fromPosition, direction))
+            .filter(square => typeof board.getPiece(square) === "undefined");
     }
 
     forwardOneSpaceAvailableMoves(board, fromPosition, direction) {
@@ -49,7 +50,8 @@ export default class Pawn extends Piece {
         }
          */
 
-        return availableMoves;
+        return availableMoves
+            .filter(square => typeof board.getPiece(Square.at(square.row - direction, square.col)) === "undefined");
     }
 
 

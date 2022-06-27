@@ -54,4 +54,5 @@ export default class Piece {
     boundsCheck(row, col, size) {
         return 0 <= row && row < size && 0 <= col && col < size;
     }
+
 }
