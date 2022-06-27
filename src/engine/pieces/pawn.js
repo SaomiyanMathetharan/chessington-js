@@ -10,9 +10,7 @@ export default class Pawn extends Piece {
 
     getAvailableMoves(board) {
         const fromPosition = board.findPiece(this);
-        return this.concatAvailableMoves(
-            this.forwardAvailableMoves(board, fromPosition)
-        );
+        return this.forwardAvailableMoves(board, fromPosition);
     }
 
     // TODO: what if piece is blocking
