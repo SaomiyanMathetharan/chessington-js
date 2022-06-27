@@ -17,17 +17,15 @@ export default class Pawn extends Piece {
     forwardAvailableMoves(board, fromPosition) {
         const direction = this.player === Player.WHITE ? 1 : -1;
 
-        return this.concatAvailableMoves(
-            this.forwardOneSpaceAvailableMoves(board, fromPosition, direction),
-            this.forwardTwoSpacesAvailableMoves(board, fromPosition, direction)
-        );
+        return this.forwardOneSpaceAvailableMoves(board, fromPosition, direction)
+            .concat(this.forwardTwoSpacesAvailableMoves(board, fromPosition, direction));
     }
 
     forwardOneSpaceAvailableMoves(board, fromPosition, direction) {
         const availableMoves = [];
 
         const toPositionRow = fromPosition.row + direction;
-        if (toPositionRow >= 0 && toPositionRow < board.board.length) {
+        if (this.boundsCheck(toPositionRow, fromPosition.col, board.board.length)) {
             availableMoves.push(new Square(toPositionRow, fromPosition.col));
         }
 

@@ -6,9 +6,7 @@ export default class Queen extends Piece {
     }
 
     getAvailableMoves(board) {
-        return this.concatAvailableMoves(
-            this.getAllDiagonalAvailableMoves(board),
-            this.getAllLateralAvailableMoves(board)
-        );
+        return this.getAllDiagonalAvailableMoves(board)
+            .concat(this.getAllLateralAvailableMoves(board));
     }
 }

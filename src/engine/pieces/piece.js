@@ -14,14 +14,6 @@ export default class Piece {
         board.movePiece(currentSquare, newSquare);
     }
 
-    concatAvailableMoves() {
-        let availableMoves = [];
-        for (const possibleMoves of arguments) {
-            availableMoves = availableMoves.concat(possibleMoves);
-        }
-        return availableMoves;
-    }
-
     getAllLateralAvailableMoves(board) {
         const availableMoves = [];
         const fromPosition = board.findPiece(this);
@@ -37,14 +29,11 @@ export default class Piece {
     getAllDiagonalAvailableMoves(board) {
         const fromPosition = board.findPiece(this);
 
-        let availableMoves = this.concatAvailableMoves(
-            this.diagonalAvailableMoves(board, fromPosition, 1, 1),
-            this.diagonalAvailableMoves(board, fromPosition, -1, 1),
-            this.diagonalAvailableMoves(board, fromPosition, 1, -1),
-            this.diagonalAvailableMoves(board, fromPosition, -1, -1)
-        )
-
-        return availableMoves.filter(square => !square.equals(fromPosition));
+        return this.diagonalAvailableMoves(board, fromPosition, 1, 1)
+            .concat(this.diagonalAvailableMoves(board, fromPosition, -1, 1))
+            .concat(this.diagonalAvailableMoves(board, fromPosition, 1, -1))
+            .concat(this.diagonalAvailableMoves(board, fromPosition, -1, -1))
+            .filter(square => !square.equals(fromPosition));
     }
 
     diagonalAvailableMoves(board, fromPosition, xDirection, yDirection) {
@@ -53,12 +42,16 @@ export default class Piece {
         const size = board.board.length;
 
         const availableMoves = [];
-        while (0 <= row && row < size && 0 <= col && col < size) {
+        while (this.boundsCheck(row, col, size)) {
             availableMoves.push(new Square(row, col));
             row += yDirection;
             col += xDirection;
         }
 
         return availableMoves;
+    }
+
+    boundsCheck(row, col, size) {
+        return 0 <= row && row < size && 0 <= col && col < size;
     }
 }
